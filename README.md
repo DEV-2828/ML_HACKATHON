@@ -96,13 +96,14 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-### 2. Start the Backend on Laptop 1
+### 2. Start the Production Backend on Laptop 1
 ```powershell
-# Binds to 0.0.0.0 so external laptops can connect
-.\.venv\Scripts\python -m uvicorn backend.mock_api:app --host 0.0.0.0 --port 8000
+# Binds to 0.0.0.0 so Laptop 2 can connect over LAN/Hotspot
+.\.venv\Scripts\python -m uvicorn backend.api:app --host 0.0.0.0 --port 8000
 ```
 - API Docs: `http://localhost:8000/docs`
 - Health Check: `http://localhost:8000/health`
+- Auto-discovers `evaluator_test/` on Laptop 1 (or override via `PATHSNAP_EVAL_DIR`).
 
 ### 3. Launch the Evaluator UI on Laptop 2
 You have two deployment options:
@@ -168,23 +169,30 @@ ML_HACKATHON/
 ├── requirements.txt               # Pinned dependencies (ML + Backend + UI)
 ├── .gitignore                     # Git hygiene: excludes large datasets, pycache, envs
 ├── backend/
+│   ├── api.py                     # Final production FastAPI backend (XGBoost + HMM/Viterbi) (M3)
 │   ├── schemas.py                 # Pydantic data contract models (M4)
-│   ├── mock_api.py                # Working mock API server for Phase 1 / evaluation (M4)
-│   └── main.py                    # Final production FastAPI backend (M3)
+│   ├── test_api.py                # Automated live HTTP test suite across all trips (M3)
+│   └── mock_api.py                # Legacy Phase 1 mock server (superseded by api.py)
 ├── ui/
 │   ├── app.py                     # Streamlit Evaluator Dashboard (M4)
 │   └── index.html                 # Standalone Leaflet web console (M4)
+├── data_geo/                      # Member 1's UTM projection, EDA, candidate generation & Folium maps
 ├── src/
-│   ├── modeling/                  # Member 2's baseline & benchmark suite
+│   ├── modeling/                  # Member 2's 6-model benchmark, Optuna Bayesian tuning & plotting
 │   │   ├── train_baselines.py     # 6-model trainer across 5 algorithm families
-│   │   ├── evaluate.py            # Observation-level Top-1 & Macro F1 metrics
-│   │   ├── data_loader.py         # Candidate & feature data loader
+│   │   ├── tune_bayesian.py       # Optuna TPE Bayesian optimisation & final model export
+│   │   ├── evaluate.py            # Leakage-free GroupKFold CV, Top-1, Continuity & Log Loss
+│   │   ├── data_loader.py         # Candidate & feature data loader with leakage checks
+│   │   ├── plot_confusion_matrices.py
+│   │   ├── plot_report_figures.py
 │   │   └── smoke_test.py          # Fast verification runner
-│   ├── preprocessing.py          # Data parsing & geospatial calculations (M1)
-│   └── hmm_decoder.py             # HMM transition/emission & Viterbi logic (M3)
-├── artifacts/                     # Serialized model weights & scalers (.pkl)
-├── results/                       # Evaluation tables, confusion matrices, logs
-└── docs/                          # Technical report draft & architecture diagrams
+│   ├── hmm_decoder.py             # Production log-space HMM + Viterbi decoder with bounded Dijkstra (M3)
+│   ├── hmm/evaluate_hmm.py        # HMM tuning & Classifier-Only vs Classifier+HMM benchmark (M3)
+│   └── inference_pipeline.py      # Zero-leakage single-trip inference extractor & server-side eval (M3)
+├── artifacts/                     # Serialized tuned model pipeline (.joblib), metadata & HMM config (.json)
+├── PLOT/                          # High-res 300-DPI report charts & confusion matrices
+├── results/                       # Evaluation tables, Optuna trials, confusion matrices & Folium HTML maps
+└── docs/                          # Consolidated Technical Report (Markdown + PDF)
 ```
 
 ---
