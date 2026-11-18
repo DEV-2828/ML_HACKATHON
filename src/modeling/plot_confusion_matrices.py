@@ -117,13 +117,15 @@ def generate_confusion_matrix_plots(
     n_models = len(model_order)
     ncols = 3
     nrows = int(np.ceil(n_models / ncols))
-    fig, axes = plt.subplots(nrows, ncols, figsize=(17.5, 5.4 * nrows))
+    fig, axes = plt.subplots(nrows, ncols, figsize=(19.5, 5.8 * nrows))
     axes_flat = np.atleast_1d(axes).ravel()
 
     for idx, model_name in enumerate(model_order):
         cm = np.asarray(cms[model_name]["matrix"], dtype=np.int64)
         row = comp_df.loc[model_name] if comp_df is not None and model_name in comp_df.index else None
         _plot_single_cm(axes_flat[idx], cm, model_name, row, cbar=False)
+        if idx % ncols != 0:
+            axes_flat[idx].set_ylabel("")
 
     for idx in range(n_models, len(axes_flat)):
         axes_flat[idx].axis("off")
@@ -132,9 +134,9 @@ def generate_confusion_matrix_plots(
         "PathSnap — Student-Test Confusion Matrices Across All 6 Models (10 Trips, 341,116 Labeled Candidates)",
         fontsize=14,
         fontweight="bold",
-        y=1.01,
+        y=0.99,
     )
-    fig.tight_layout()
+    fig.tight_layout(rect=[0, 0, 1, 0.96], w_pad=2.5, h_pad=2.5)
     grid_path = out_dir / "cm_all_models_grid.png"
     fig.savefig(grid_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
