@@ -1,0 +1,20 @@
+{
+  "model_name": "MLP",
+  "selection_criterion": "CV Macro F1-score (untuned baseline)",
+  "cv_macro_f1": 0.8857240193250764,
+  "feature_cols": [
+    "distance_to_arc_m",
+    "signed_lateral_m",
+    "distance_to_arc_midpoint_m",
+    "distance_to_nearest_endpoint_m",
+    "arc_length_m",
+    "gps_heading_sin_delta",
+    "gps_heading_cos_delta",
+    "gps_speed_mps",
+    "gps_step_distance_m",
+    "gps_time_delta_s",
+    "gps_turn_angle_rad",
+    "point_to_arc_along_fraction"
+  ],
+  "random_seed": 42
+}

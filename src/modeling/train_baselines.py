@@ -117,21 +117,23 @@ def get_baseline_model_specs(seed: int = RANDOM_SEED) -> List[ModelSpec]:
         ModelSpec(
             name="RandomForest",
             family="Ensemble (Bagging)",
-            key_config_str="n_estimators=200, max_depth=16, min_samples_leaf=5",
-            loss_objective="Gini Impurity (Bagged Ensemble)",
+            key_config_str="n_estimators=100, max_depth=16, min_samples_leaf=10, max_samples=0.4",
+            loss_objective="Gini Impurity (Subsampled Bagged Ensemble)",
             scale=False,
             hyperparams={
-                "n_estimators": 200,
+                "n_estimators": 100,
                 "max_depth": 16,
-                "min_samples_leaf": 5,
+                "min_samples_leaf": 10,
+                "max_samples": 0.4,
                 "class_weight": "balanced_subsample",
                 "n_jobs": -1,
                 "random_state": seed,
             },
             factory=lambda y_tr: RandomForestClassifier(
-                n_estimators=200,
+                n_estimators=100,
                 max_depth=16,
-                min_samples_leaf=5,
+                min_samples_leaf=10,
+                max_samples=0.4,
                 class_weight="balanced_subsample",
                 n_jobs=-1,
                 random_state=seed,
@@ -140,21 +142,25 @@ def get_baseline_model_specs(seed: int = RANDOM_SEED) -> List[ModelSpec]:
         ModelSpec(
             name="ExtraTrees",
             family="Ensemble (Randomized Trees)",
-            key_config_str="n_estimators=200, max_depth=18, min_samples_leaf=5",
+            key_config_str="n_estimators=100, max_depth=18, min_samples_leaf=10, bootstrap=True, max_samples=0.4",
             loss_objective="Gini Impurity (Extremely Randomized Splits)",
             scale=False,
             hyperparams={
-                "n_estimators": 200,
+                "n_estimators": 100,
                 "max_depth": 18,
-                "min_samples_leaf": 5,
+                "min_samples_leaf": 10,
+                "bootstrap": True,
+                "max_samples": 0.4,
                 "class_weight": "balanced_subsample",
                 "n_jobs": -1,
                 "random_state": seed,
             },
             factory=lambda y_tr: ExtraTreesClassifier(
-                n_estimators=200,
+                n_estimators=100,
                 max_depth=18,
-                min_samples_leaf=5,
+                min_samples_leaf=10,
+                bootstrap=True,
+                max_samples=0.4,
                 class_weight="balanced_subsample",
                 n_jobs=-1,
                 random_state=seed,
@@ -163,11 +169,11 @@ def get_baseline_model_specs(seed: int = RANDOM_SEED) -> List[ModelSpec]:
         ModelSpec(
             name="XGBoost",
             family="Boosting",
-            key_config_str="n_estimators=300, max_depth=6, lr=0.1, subsample=0.8, hist",
+            key_config_str="n_estimators=200, max_depth=6, lr=0.1, subsample=0.8, hist",
             loss_objective="Binary Logistic Loss (binary:logistic / logloss)",
             scale=False,
             hyperparams={
-                "n_estimators": 300,
+                "n_estimators": 200,
                 "max_depth": 6,
                 "learning_rate": 0.1,
                 "subsample": 0.8,
@@ -179,7 +185,7 @@ def get_baseline_model_specs(seed: int = RANDOM_SEED) -> List[ModelSpec]:
                 "random_state": seed,
             },
             factory=lambda y_tr: XGBClassifier(
-                n_estimators=300,
+                n_estimators=200,
                 max_depth=6,
                 learning_rate=0.1,
                 subsample=0.8,
@@ -195,28 +201,28 @@ def get_baseline_model_specs(seed: int = RANDOM_SEED) -> List[ModelSpec]:
         ModelSpec(
             name="MLP",
             family="Neural Network",
-            key_config_str="hidden=(128,64), relu, alpha=1e-3, lr=1e-3, max_iter=25",
+            key_config_str="hidden=(64,32), relu, alpha=1e-3, lr=1e-3, batch=2048, max_iter=15",
             loss_objective="L2-regularised Binary Cross-Entropy (Adam optimiser)",
             scale=True,
             hyperparams={
-                "hidden_layer_sizes": [128, 64],
+                "hidden_layer_sizes": [64, 32],
                 "activation": "relu",
                 "solver": "adam",
                 "alpha": 1e-3,
-                "batch_size": 256,
+                "batch_size": 2048,
                 "learning_rate_init": 1e-3,
-                "max_iter": 25,
+                "max_iter": 15,
                 "early_stopping": False,
                 "random_state": seed,
             },
             factory=lambda y_tr: MLPClassifier(
-                hidden_layer_sizes=(128, 64),
+                hidden_layer_sizes=(64, 32),
                 activation="relu",
                 solver="adam",
                 alpha=1e-3,
-                batch_size=256,
+                batch_size=2048,
                 learning_rate_init=1e-3,
-                max_iter=25,
+                max_iter=15,
                 early_stopping=False,
                 random_state=seed,
             ),
@@ -251,7 +257,7 @@ def record_xgboost_history(
     y_va = train_ds.y[va_idx]
 
     clf = XGBClassifier(
-        n_estimators=300,
+        n_estimators=200,
         max_depth=6,
         learning_rate=0.1,
         subsample=0.8,
@@ -279,7 +285,7 @@ def record_xgboost_history(
 def record_mlp_history(
     train_ds: CandidateDataset,
     out_csv: Path,
-    epochs: int = 25,
+    epochs: int = 15,
     seed: int = RANDOM_SEED,
 ) -> pd.DataFrame:
     """Capture genuine epoch-wise train vs validation log-loss curve for MLP."""
@@ -293,11 +299,11 @@ def record_mlp_history(
     y_va = train_ds.y[va_idx]
 
     mlp = MLPClassifier(
-        hidden_layer_sizes=(128, 64),
+        hidden_layer_sizes=(64, 32),
         activation="relu",
         solver="adam",
         alpha=1e-3,
-        batch_size=min(256, max(16, len(y_tr) // 4)),
+        batch_size=min(2048, max(16, len(y_tr) // 4)),
         learning_rate_init=1e-3,
         max_iter=1,
         warm_start=True,
@@ -420,7 +426,7 @@ def run_baseline_benchmark(
             history_file = str(hist_path)
         elif spec.name == "MLP":
             hist_path = out_dir / "history_MLP.csv"
-            record_mlp_history(train_ds, hist_path, epochs=25, seed=seed)
+            record_mlp_history(train_ds, hist_path, epochs=15, seed=seed)
             history_file = str(hist_path)
 
         # 4. Save student_test candidate probabilities for Member 3 (HMM/Viterbi)
@@ -510,14 +516,24 @@ def run_baseline_benchmark(
 
     with (out_dir / "model_configs.json").open("w", encoding="utf-8") as f:
         json.dump(configs_log, f, indent=2)
+    with (out_dir / "configs.json").open("w", encoding="utf-8") as f:
+        json.dump(configs_log, f, indent=2)
     with (out_dir / "confusion_matrices.json").open("w", encoding="utf-8") as f:
         json.dump(confusion_matrices, f, indent=2)
+    for model_name, cm_info in confusion_matrices.items():
+        pd.DataFrame(
+            cm_info["matrix"], index=["true_0", "true_1"], columns=["pred_0", "pred_1"]
+        ).to_csv(out_dir / f"cm_{model_name}.csv")
     with (out_dir / "experiment_summary.json").open("w", encoding="utf-8") as f:
         json.dump(full_summary, f, indent=2)
 
-    # Save best untuned baseline artifact immediately so Member 3 can integrate early
+    # Save best untuned baseline artifact and copy its student_test probs for Member 3
     if best_fitted_pipe is not None and best_model_name is not None:
         joblib.dump(best_fitted_pipe, art_dir / "baseline_best_model.joblib")
+        best_probs_src = out_dir / f"student_test_probs_{best_model_name}.parquet"
+        best_probs_dst = out_dir.parent / f"student_test_probs_{best_model_name}.parquet"
+        if best_probs_src.exists():
+            best_probs_dst.write_bytes(best_probs_src.read_bytes())
         with (art_dir / "baseline_best_metadata.json").open("w", encoding="utf-8") as f:
             json.dump(
                 {
