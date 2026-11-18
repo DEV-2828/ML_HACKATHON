@@ -1,0 +1,18 @@
+{
+  "train": {
+    "n_trips": 80,
+    "total_gps_observations": 69495,
+    "total_candidates": 334194,
+    "candidate_miss_rate": 0.1389,
+    "positive_rate": 0.392,
+    "elapsed_seconds": 15.62
+  },
+  "student_test": {
+    "n_trips": 10,
+    "total_gps_observations": 9582,
+    "total_candidates": 46437,
+    "candidate_miss_rate": 0.0472,
+    "positive_rate": 0.4656,
+    "elapsed_seconds": 1.76
+  }
+}
