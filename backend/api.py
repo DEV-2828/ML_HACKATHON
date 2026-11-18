@@ -304,6 +304,7 @@ def evaluate_trip(req: TripRequest, request: Request) -> TripEvaluationResponse:
             "candidates_scored": int(len(scored_df)),
             "sequence_arc_f1": round(float(eval_stats.get("sequence_arc_f1", 0.0)), 4),
             "model_name": state.model_metadata.get("model_name", "XGBoost (Bayesian Tuned)"),
+            "model_family": "Boosting — XGBoost (Bayesian Tuned) + Log-Space HMM/Viterbi",
             "decoder": "Log-Space HMM + Viterbi (Classifier Emissions + Bounded Dijkstra Road Transitions)",
             "hmm_config": state.hmm_config.to_dict(),
             "timings_ms": {
