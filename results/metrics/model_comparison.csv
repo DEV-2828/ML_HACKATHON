@@ -1,0 +1,7 @@
+Model,Algorithm Family,Key Configuration,Train Macro F1,CV Macro F1-score,CV Macro F1 Std,Top-1 Accuracy,Top-1 Accuracy (Covered),Route Continuity,Student-Test Macro F1-score,Student-Test Accuracy,Precision,Recall,Log Loss,Candidate Miss Rate,Training Time (s),Inference Time (s),Inference Time / Trip (ms)
+MLP,Neural Network,"hidden=(64,32), relu, alpha=1e-3, lr=1e-3, batch=2048, max_iter=15",0.89015,0.88572,0.00928,0.82234,0.83303,0.91965,0.89664,0.97873,0.82017,0.78947,0.05564,0.01284,50.7225,0.1024,10.24
+RandomForest,Ensemble (Bagging),"n_estimators=100, max_depth=16, min_samples_leaf=10, max_samples=0.4",0.86022,0.84711,0.01218,0.82249,0.83319,0.91219,0.85336,0.96111,0.5948,0.93693,0.10256,0.01284,67.9137,0.2246,22.46
+XGBoost,Boosting,"n_estimators=200, max_depth=6, lr=0.1, subsample=0.8, hist",0.83824,0.82701,0.01262,0.82604,0.83679,0.91705,0.83265,0.95262,0.5412,0.95532,0.1232,0.01284,13.7195,0.0581,5.81
+DecisionTree,Tree-based,"max_depth=12, min_samples_leaf=20, class_weight=balanced",0.83344,0.81837,0.01204,0.80324,0.81368,0.8951,0.82474,0.94962,0.5252,0.95141,0.1444,0.01284,40.0147,0.0352,3.52
+ExtraTrees,Ensemble (Randomized Trees),"n_estimators=100, max_depth=18, min_samples_leaf=10, bootstrap=True, max_samples=0.4",0.81735,0.81415,0.01211,0.81477,0.82537,0.9097,0.81705,0.94623,0.50804,0.95527,0.16049,0.01284,46.0071,0.228,22.8
+LogisticRegression,Linear / Probabilistic,"C=1.0, lbfgs, class_weight=balanced, StandardScaler",0.71778,0.71606,0.01458,0.74499,0.75468,0.86844,0.71041,0.88552,0.3232,0.97309,0.22248,0.01284,4.2558,0.0366,3.66

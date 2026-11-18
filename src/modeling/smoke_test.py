@@ -90,7 +90,7 @@ def main() -> None:
         comp_df = run_baseline_benchmark(
             train_path=train_p,
             student_test_path=test_p,
-            stats_path=stats_p,
+            metadata_path=stats_p,
             raw_data_dir=None,
             output_dir=out_dir,
             artifacts_dir=art_dir,
