@@ -327,9 +327,9 @@ def record_mlp_history(
 
 
 def run_baseline_benchmark(
-    train_path: str | Path,
-    student_test_path: str | Path,
-    stats_path: Optional[str | Path] = None,
+    train_path: str | Path = "data_geo/outputs/data/train_candidates.parquet",
+    student_test_path: str | Path = "data_geo/outputs/data/student_test_candidates.parquet",
+    metadata_path: Optional[str | Path] = "data_geo/outputs/data/metadata.json",
     raw_data_dir: Optional[str | Path] = "Student folder",
     output_dir: str | Path = "results/metrics",
     artifacts_dir: str | Path = "artifacts",
@@ -345,7 +345,7 @@ def run_baseline_benchmark(
     train_ds, test_ds = load_train_and_student_test(
         train_path=train_path,
         student_test_path=student_test_path,
-        stats_path=stats_path,
+        metadata_path=metadata_path,
     )
 
     specs = get_baseline_model_specs(seed=seed)
@@ -407,7 +407,9 @@ def run_baseline_benchmark(
             y_true=test_ds.y,
             y_prob=test_prob,
             total_gps_observations=test_ds.total_gps_observations,
+            candidate_miss_rate=test_ds.candidate_miss_rate,
             raw_data_dir=raw_data_dir,
+            inference_time_sec=test_infer_sec,
         )
 
         # 3. Record real epoch/round learning curves ONLY for iterative models
@@ -459,6 +461,7 @@ def run_baseline_benchmark(
             "Candidate Miss Rate": round(float(test_metrics["candidate_miss_rate"]), 5),
             "Training Time (s)": round(full_train_sec, 4),
             "Inference Time (s)": round(test_infer_sec, 4),
+            "Inference Time / Trip (ms)": round(float(test_metrics["inference_time_per_trip_ms"]), 2),
         }
         comparison_rows.append(row)
 
@@ -541,18 +544,18 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--train",
-        default="data/processed/train_candidates.parquet",
+        default="data_geo/outputs/data/train_candidates.parquet",
         help="Path to train candidate table (.parquet or .csv)",
     )
     parser.add_argument(
         "--test",
-        default="data/processed/student_test_candidates.parquet",
+        default="data_geo/outputs/data/student_test_candidates.parquet",
         help="Path to student_test candidate table (.parquet or .csv)",
     )
     parser.add_argument(
-        "--stats",
-        default="data/processed/candidate_stats.json",
-        help="Optional JSON with total_gps_observations and candidate_miss_rate per split",
+        "--metadata",
+        default="data_geo/outputs/data/metadata.json",
+        help="Optional Member 1 metadata.json with feature_columns and candidate_miss_rate per split",
     )
     parser.add_argument(
         "--raw-dir",
@@ -576,11 +579,11 @@ def parse_args() -> argparse.Namespace:
 
 if __name__ == "__main__":
     args = parse_args()
-    stats_file = Path(args.stats) if args.stats and Path(args.stats).exists() else None
+    meta_file = Path(args.metadata) if args.metadata and Path(args.metadata).exists() else None
     run_baseline_benchmark(
         train_path=args.train,
         student_test_path=args.test,
-        stats_path=stats_file,
+        metadata_path=meta_file,
         raw_data_dir=args.raw_dir,
         output_dir=args.out_dir,
         artifacts_dir=args.artifacts_dir,
