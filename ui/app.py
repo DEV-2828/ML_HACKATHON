@@ -150,7 +150,7 @@ if run_button:
             response = requests.post(
                 f"{backend_url}/predict",
                 json={"trip_id": selected_trip},
-                timeout=20
+                timeout=60
             )
             req_latency = round((time.perf_counter() - t_req_start) * 1000, 1)
 
@@ -179,12 +179,12 @@ if "last_result" in st.session_state:
     top1_acc = m["top_1_accuracy"] * 100
     clf_acc = m.get("classifier_top_1_accuracy", 0.72) * 100
     delta_acc = round(top1_acc - clf_acc, 1)
-    kpi1.metric("Top-1 Accuracy", f"{top1_acc:.1f}%", f"+{delta_acc}% vs Clf")
+    kpi1.metric("Top-1 Accuracy", f"{top1_acc:.1f}%", f"{delta_acc:+.1f}% vs Clf")
 
     continuity = m["route_continuity"] * 100
     clf_cont = m.get("classifier_continuity", 0.54) * 100
     delta_cont = round(continuity - clf_cont, 1)
-    kpi2.metric("Route Continuity", f"{continuity:.1f}%", f"+{delta_cont}% vs Clf")
+    kpi2.metric("Route Continuity", f"{continuity:.1f}%", f"{delta_cont:+.1f}% vs Clf")
 
     miss_rate = m["candidate_miss_rate"] * 100
     kpi3.metric("Candidate Miss Rate", f"{miss_rate:.2f}%", "-Low", delta_color="inverse")
@@ -316,5 +316,5 @@ if "last_result" in st.session_state:
             "Sampled Points on Map": len(raw_gps),
             "Road Segments in Subgraph": details.get("arcs_count", "N/A"),
             "Sequential Decoder": details.get("decoder", "Viterbi Trellis"),
-            "Model Pipeline": details.get("model_family", "Trained Classifier + HMM")
+            "Model Pipeline": details.get("model_name") or details.get("model_family", "Trained Classifier + HMM")
         })
