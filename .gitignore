@@ -1,0 +1,36 @@
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Python caches & build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Secrets & environment variables (never commit credentials)
+.env
+.env.*
+*.pem
+*.key
+
+# Raw & large local datasets (keep repo lightweight for GitHub)
+Student folder/
+evaluator_test/
+data/raw/
+data/processed/*.parquet
+data/processed/*.csv
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
