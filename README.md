@@ -194,7 +194,11 @@ ML_HACKATHON/
 ├── results/                       # Evaluation tables, Optuna trials, confusion matrices & Folium HTML maps
 └── docs/                          # Consolidated Technical Report (Markdown + PDF)
 ```
-
+Contributors 
+Devopam Pal
+Deepthi N Reddy
+Dwijesh Krishna
+Hanumantha L
 ---
 
 ## 📈 Evaluation Metrics & Scoring Criteria
