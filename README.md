@@ -195,10 +195,10 @@ ML_HACKATHON/
 └── docs/                          # Consolidated Technical Report (Markdown + PDF)
 ```
 Contributors 
-Devopam Pal
-Deepthi N Reddy
-Dwijesh Krishna
-Hanumantha L
+Devopam Pal(PES2UG24CS152)
+Deepthi N Reddy(PES2UG24CS149)
+Dwijesh Krishna(PES2UG24CS163)
+Hanumantha L(PES2UG24CS179)
 ---
 
 ## 📈 Evaluation Metrics & Scoring Criteria
