@@ -1,0 +1,37 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+.venv/
+env/
+venv/
+ENV/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+# Sensitive files
+.env
+*.pem
+*.key
+
+# Large raw datasets (keep data external or in specified directories)
+Student folder/
+PathSnap_student_materials/
+data/raw/
+*.tar.gz
+*.zip
+
+# Logs & temp files
+*.log
+tmp/
