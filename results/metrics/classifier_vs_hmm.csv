@@ -1,0 +1,4 @@
+Pipeline,Top-1 Accuracy (Overall),Top-1 Accuracy (Covered),Route Continuity,Sequence Arc Precision,Sequence Arc Recall,Sequence Arc F1,HMM Decode Time / Trip (ms)
+Classifier-Only (Bayesian-Tuned XGBoost),0.82886,0.83964,0.92055,0.8394,0.87707,0.8539,0.0
+Classifier + HMM/Viterbi,0.87093,0.88226,0.98344,0.95049,0.89307,0.91878,564.34
+Delta (HMM - Classifier-Only),0.04207,0.04261,0.0629,0.11109,0.01601,0.06488,564.34

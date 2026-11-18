@@ -1,0 +1,12 @@
+{
+  "emission_weight": 0.7,
+  "beta": 20.0,
+  "self_transition_bonus": 1.5,
+  "direct_edge_bonus": 0.8,
+  "disconnect_penalty": -12.0,
+  "gap_threshold_s": 5.0,
+  "max_search_multiplier": 2.5,
+  "min_search_radius_m": 120.0,
+  "max_search_radius_m": 600.0,
+  "prob_eps": 1e-06
+}
