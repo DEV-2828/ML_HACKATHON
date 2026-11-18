@@ -1,0 +1,64 @@
+{
+  "model_name": "XGBoost (Bayesian Tuned)",
+  "algorithm_family": "Boosting",
+  "tuning_method": "Bayesian Optimisation (Optuna TPESampler)",
+  "objective_function": "Maximize 5-fold GroupKFold (trip_id) CV Macro F1-score",
+  "n_trials": 30,
+  "random_seed": 42,
+  "training_device": "cuda",
+  "inference_device": "cpu",
+  "preprocessing": "SimpleImputer(strategy='median') inside sklearn Pipeline",
+  "feature_cols": [
+    "distance_to_arc_m",
+    "signed_lateral_m",
+    "distance_to_arc_midpoint_m",
+    "distance_to_nearest_endpoint_m",
+    "arc_length_m",
+    "gps_heading_sin_delta",
+    "gps_heading_cos_delta",
+    "gps_speed_mps",
+    "gps_step_distance_m",
+    "gps_time_delta_s",
+    "gps_turn_angle_rad",
+    "point_to_arc_along_fraction"
+  ],
+  "best_hyperparameters": {
+    "scale_pos_weight": 1.5660465085905042,
+    "max_depth": 9,
+    "learning_rate": 0.05387608604441067,
+    "n_estimators": 399,
+    "min_child_weight": 13,
+    "subsample": 0.8483064403301409,
+    "colsample_bytree": 0.7677224883173046,
+    "reg_alpha": 0.00012810652417526378,
+    "reg_lambda": 1.1579384536477726
+  },
+  "metrics_tuned": {
+    "Version": "XGBoost (Bayesian Tuned)",
+    "Train Macro F1": 0.91541,
+    "CV Macro F1-score": 0.88993,
+    "CV Macro F1 Std": 0.01025,
+    "Student-Test Top-1 Accuracy": 0.82886,
+    "Top-1 Accuracy (Covered)": 0.83964,
+    "Student-Test Macro F1-score": 0.89833,
+    "Precision": 0.77409,
+    "Recall": 0.84604,
+    "Log Loss": 0.0567,
+    "Route Continuity": 0.92055,
+    "Candidate Miss Rate": 0.01284,
+    "Training Time (s)": 6.2692,
+    "Inference Time (s)": 0.1231,
+    "Inference Time / Trip (ms)": 12.31
+  },
+  "confusion_matrix_student_test": [
+    [
+      317532,
+      4670
+    ],
+    [
+      2912,
+      16002
+    ]
+  ],
+  "usage": "pipe = joblib.load('artifacts/final_model.joblib'); probs = pipe.predict_proba(df[metadata['feature_cols']])[:, 1]"
+}

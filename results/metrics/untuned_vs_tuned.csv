@@ -1,0 +1,4 @@
+Version,Train Macro F1,CV Macro F1-score,CV Macro F1 Std,Student-Test Top-1 Accuracy,Top-1 Accuracy (Covered),Student-Test Macro F1-score,Precision,Recall,Log Loss,Route Continuity,Candidate Miss Rate,Training Time (s),Inference Time (s),Inference Time / Trip (ms)
+XGBoost (Untuned Baseline),0.83824,0.82701,0.01262,0.82604,0.83679,0.83265,0.5412,0.95532,0.1232,0.91705,0.01284,13.7195,0.0581,5.81
+XGBoost (Bayesian Tuned),0.91541,0.88993,0.01025,0.82886,0.83964,0.89833,0.77409,0.84604,0.0567,0.92055,0.01284,6.2692,0.1231,12.31
+Delta (Tuned - Untuned),0.07717,0.06292,-0.00237,0.00282,0.00285,0.06568,0.23289,-0.10928,-0.0665,0.0035,0.0,-7.4503,0.065,6.5

@@ -1,0 +1,243 @@
+{
+  "model": "XGBoost",
+  "sampler": "Optuna TPESampler (Tree-structured Parzen Estimator)",
+  "cv_strategy": "5-fold GroupKFold grouped by trip_id on 80 training trips",
+  "objective_function": "Maximize mean 5-fold GroupKFold CV Macro F1-score",
+  "n_trials": 30,
+  "random_seed": 42,
+  "device_used": "cuda",
+  "search_space": {
+    "scale_pos_weight": {
+      "type": "float",
+      "low": 1.0,
+      "high": 6.0,
+      "log": false,
+      "rationale": "Untuned full ratio (~14.2) over-shifted probabilities upward; tuning [1.0, 6.0] balances recall with calibrated precision & log loss for HMM emissions."
+    },
+    "max_depth": {
+      "type": "int",
+      "low": 4,
+      "high": 10,
+      "log": false,
+      "rationale": "Controls interaction depth across geometric/kinematic features (distance x heading x road length)."
+    },
+    "learning_rate": {
+      "type": "float",
+      "low": 0.02,
+      "high": 0.25,
+      "log": true,
+      "rationale": "Step-size shrinkage controlling convergence speed and generalisation."
+    },
+    "n_estimators": {
+      "type": "int",
+      "low": 150,
+      "high": 500,
+      "log": false,
+      "rationale": "Untuned XGBoost was still improving at round 200; expanding up to 500 captures remaining signal."
+    },
+    "min_child_weight": {
+      "type": "int",
+      "low": 1,
+      "high": 20,
+      "log": false,
+      "rationale": "Minimum Hessian weight per leaf to prevent overfitting noisy GPS outliers."
+    },
+    "subsample": {
+      "type": "float",
+      "low": 0.6,
+      "high": 1.0,
+      "log": false,
+      "rationale": "Row subsampling per tree for variance reduction."
+    },
+    "colsample_bytree": {
+      "type": "float",
+      "low": 0.6,
+      "high": 1.0,
+      "log": false,
+      "rationale": "Feature subsampling per tree across the 12 geometric & kinematic predictors."
+    },
+    "reg_alpha": {
+      "type": "float",
+      "low": 0.0001,
+      "high": 10.0,
+      "log": true,
+      "rationale": "L1 leaf weight regularisation."
+    },
+    "reg_lambda": {
+      "type": "float",
+      "low": 0.001,
+      "high": 10.0,
+      "log": true,
+      "rationale": "L2 leaf weight regularisation for smoother, better-calibrated log-odds."
+    }
+  },
+  "optimisation_wall_time_sec": 521.17,
+  "optimisation_wall_time_min": 8.69,
+  "best_trial_number": 23,
+  "best_cv_macro_f1": 0.88993,
+  "best_hyperparameters": {
+    "scale_pos_weight": 1.5660465085905042,
+    "max_depth": 9,
+    "learning_rate": 0.05387608604441067,
+    "n_estimators": 399,
+    "min_child_weight": 13,
+    "subsample": 0.8483064403301409,
+    "colsample_bytree": 0.7677224883173046,
+    "reg_alpha": 0.00012810652417526378,
+    "reg_lambda": 1.1579384536477726
+  },
+  "untuned_metrics": {
+    "Version": "XGBoost (Untuned Baseline)",
+    "Train Macro F1": 0.83824,
+    "CV Macro F1-score": 0.82701,
+    "CV Macro F1 Std": 0.01262,
+    "Student-Test Top-1 Accuracy": 0.82604,
+    "Top-1 Accuracy (Covered)": 0.83679,
+    "Student-Test Macro F1-score": 0.83265,
+    "Precision": 0.5412,
+    "Recall": 0.95532,
+    "Log Loss": 0.1232,
+    "Route Continuity": 0.91705,
+    "Candidate Miss Rate": 0.01284,
+    "Training Time (s)": 13.7195,
+    "Inference Time (s)": 0.0581,
+    "Inference Time / Trip (ms)": 5.81
+  },
+  "tuned_metrics": {
+    "Version": "XGBoost (Bayesian Tuned)",
+    "Train Macro F1": 0.91541,
+    "CV Macro F1-score": 0.88993,
+    "CV Macro F1 Std": 0.01025,
+    "Student-Test Top-1 Accuracy": 0.82886,
+    "Top-1 Accuracy (Covered)": 0.83964,
+    "Student-Test Macro F1-score": 0.89833,
+    "Precision": 0.77409,
+    "Recall": 0.84604,
+    "Log Loss": 0.0567,
+    "Route Continuity": 0.92055,
+    "Candidate Miss Rate": 0.01284,
+    "Training Time (s)": 6.2692,
+    "Inference Time (s)": 0.1231,
+    "Inference Time / Trip (ms)": 12.31
+  },
+  "tuned_cv_full": {
+    "cv_strategy": "group",
+    "n_splits": 5,
+    "folds": [
+      {
+        "fold": 1,
+        "val_trips": 16,
+        "train_macro_f1": 0.9162383330995512,
+        "val_macro_f1": 0.8928711714705831,
+        "train_minus_val_macro_f1": 0.023367161628968014,
+        "val_accuracy": 0.9704262002169644,
+        "val_precision": 0.7942637812890009,
+        "val_recall": 0.8093192888163735,
+        "val_log_loss": 0.07985571388288215,
+        "val_top1_accuracy": 0.8362886004270941,
+        "val_route_continuity": 0.9369674275701495,
+        "train_time_sec": 5.373501399999441,
+        "inference_time_sec": 0.12745770000037737,
+        "inference_time_per_trip_ms": 7.966106250023586
+      },
+      {
+        "fold": 2,
+        "val_trips": 16,
+        "train_macro_f1": 0.9187732653227029,
+        "val_macro_f1": 0.8944649124355737,
+        "train_minus_val_macro_f1": 0.02430835288712918,
+        "val_accuracy": 0.9768925263899162,
+        "val_precision": 0.7819947569113441,
+        "val_recall": 0.8213648737444851,
+        "val_log_loss": 0.056707116682864975,
+        "val_top1_accuracy": 0.8370099189586658,
+        "val_route_continuity": 0.9094324265097204,
+        "train_time_sec": 5.330532800000583,
+        "inference_time_sec": 0.12834950000069512,
+        "inference_time_per_trip_ms": 8.021843750043445
+      },
+      {
+        "fold": 3,
+        "val_trips": 16,
+        "train_macro_f1": 0.9140611984253435,
+        "val_macro_f1": 0.9034840421954161,
+        "train_minus_val_macro_f1": 0.010577156229927387,
+        "val_accuracy": 0.9794768597438056,
+        "val_precision": 0.8156148259454045,
+        "val_recall": 0.8200818382121499,
+        "val_log_loss": 0.05924805151800866,
+        "val_top1_accuracy": 0.8327038086244886,
+        "val_route_continuity": 0.9199156011841028,
+        "train_time_sec": 5.366317900001377,
+        "inference_time_sec": 0.12388909999936004,
+        "inference_time_per_trip_ms": 7.743068749960003
+      },
+      {
+        "fold": 4,
+        "val_trips": 16,
+        "train_macro_f1": 0.9232510387104084,
+        "val_macro_f1": 0.8726510385073633,
+        "train_minus_val_macro_f1": 0.050600000203045115,
+        "val_accuracy": 0.9707790773103036,
+        "val_precision": 0.7262384713094383,
+        "val_recall": 0.7989549790388237,
+        "val_log_loss": 0.0788745756584997,
+        "val_top1_accuracy": 0.7860744881220001,
+        "val_route_continuity": 0.9008266974651997,
+        "train_time_sec": 5.34322500000053,
+        "inference_time_sec": 0.12405389999912586,
+        "inference_time_per_trip_ms": 7.753368749945366
+      },
+      {
+        "fold": 5,
+        "val_trips": 16,
+        "train_macro_f1": 0.9181176318929893,
+        "val_macro_f1": 0.8861707940699737,
+        "train_minus_val_macro_f1": 0.03194683782301566,
+        "val_accuracy": 0.964505771838837,
+        "val_precision": 0.7778758156523167,
+        "val_recall": 0.8061113828226338,
+        "val_log_loss": 0.0915697782751041,
+        "val_top1_accuracy": 0.8210177132285709,
+        "val_route_continuity": 0.938142136946672,
+        "train_time_sec": 5.294544600001245,
+        "inference_time_sec": 0.12290699999903154,
+        "inference_time_per_trip_ms": 7.681687499939471
+      }
+    ],
+    "train_macro_f1_mean": 0.918088293490199,
+    "train_macro_f1_std": 0.003058229339678307,
+    "val_macro_f1_mean": 0.8899283917357821,
+    "val_macro_f1_std": 0.010253020109300608,
+    "train_minus_val_macro_f1_mean": 0.02815990175441707,
+    "train_minus_val_macro_f1_std": 0.013151856370398285,
+    "val_accuracy_mean": 0.9724160870999654,
+    "val_accuracy_std": 0.005274572161486587,
+    "val_precision_mean": 0.7791975302215008,
+    "val_precision_std": 0.02955484622351898,
+    "val_recall_mean": 0.8111664725268932,
+    "val_recall_std": 0.00850385471988454,
+    "val_log_loss_mean": 0.07325104720347192,
+    "val_log_loss_std": 0.013271074768406468,
+    "val_top1_accuracy_mean": 0.8226189058721639,
+    "val_top1_accuracy_std": 0.019150589322447426,
+    "val_route_continuity_mean": 0.9210568579351689,
+    "val_route_continuity_std": 0.014769849360017098,
+    "train_time_sec_mean": 5.341624340000635,
+    "train_time_sec_std": 0.02817092526026031,
+    "inference_time_sec_mean": 0.125331439999718,
+    "inference_time_sec_std": 0.0021549956012287402,
+    "inference_time_per_trip_ms_mean": 7.833214999982374,
+    "inference_time_per_trip_ms_std": 0.13468722507679626
+  },
+  "tuned_student_test_confusion_matrix": [
+    [
+      317532,
+      4670
+    ],
+    [
+      2912,
+      16002
+    ]
+  ]
+}
