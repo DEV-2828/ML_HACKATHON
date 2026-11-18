@@ -306,10 +306,10 @@ def plot_untuned_vs_tuned(m_dir: Path, out_dir: Path) -> Path | None:
 
     ax.set_xticks(x)
     ax.set_xticklabels([lbl for _, lbl in metrics], fontsize=10, fontweight="bold")
-    ax.set_ylim(0.0, 1.05)
+    ax.set_ylim(0.0, 1.12)
     ax.set_ylabel("Metric Value", fontsize=10.5, fontweight="bold")
-    ax.set_title("XGBoost: Untuned Baseline vs Bayesian-Tuned Performance (Same Splits & Metrics)", fontsize=12, fontweight="bold", pad=12)
-    ax.legend(frameon=True, loc="upper right")
+    ax.set_title("XGBoost: Untuned Baseline vs Bayesian-Tuned Performance (Same Splits & Metrics)", fontsize=12, fontweight="bold", pad=16)
+    ax.legend(frameon=True, loc="upper center", ncol=2, bbox_to_anchor=(0.5, 1.01))
     ax.grid(axis="y", linestyle="--", alpha=0.4)
     fig.tight_layout()
     return _save(fig, out_dir / "untuned_vs_tuned_xgboost.png")
