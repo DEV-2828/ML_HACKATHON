@@ -18,9 +18,9 @@ The solution follows a strict two-laptop distributed model communicating over a 
                    [ LAPTOP 1: MODEL & API BACKEND ]
              ┌───────────────────────────────────────────────┐
              │ • Raw Road Network Graph (.nodes, .arcs)      │
-             │ • Preprocessing & Candidate Projection        │
-             │ • Trained Classifier (Random Forest / GBDT)   │
-             │ • Hidden Markov Model & Viterbi Decoder       │
+             │ • Preprocessing & Candidate Projection (M1)   │
+             │ • Trained Classifier (Random Forest/XGB) (M2) │
+             │ • Hidden Markov Model & Viterbi Decoder (M3)  │
              │ • Server-Side Ground Truth Evaluation Engine  │
              │ • FastAPI REST Service (:8000)                │
              └───────────────────────▲───────────────────────┘
@@ -48,7 +48,7 @@ The solution follows a strict two-laptop distributed model communicating over a 
 | Role | Member Focus | Key Responsibilities |
 | :--- | :--- | :--- |
 | **Member 1** | Data Preprocessing & EDA | Data parsing, GPS projection, candidate arc generation, feature engineering |
-| **Member 2** | Model Experimentation & Opt | Training 5 model families, cross-validation, Bayesian hyperparameter tuning |
+| **Member 2** | Model Experimentation & Opt | Training 5+ model families, cross-validation, Bayesian hyperparameter tuning |
 | **Member 3** | HMM, Viterbi & FastAPI Backend | Sequential route decoding, transition/emission matrices, FastAPI service |
 | **Member 4** | UI, Integration, GitHub & Report | Evaluator UI (Streamlit/Leaflet), 2-laptop networking, repo hygiene, report lead |
 
@@ -84,8 +84,8 @@ Test-NetConnection -ComputerName <LAPTOP_1_IP> -Port 8000
 ### 1. Setup Environment
 ```bash
 # Clone the repository
-git clone https://github.com/<your-team>/PathSnap.git
-cd PathSnap
+git clone https://github.com/DEV-2828/ML_HACKATHON.git
+cd ML_HACKATHON
 
 # Create and activate virtual environment
 python -m venv .venv
@@ -163,25 +163,25 @@ You have two deployment options:
 ## 📂 Project Repository Structure
 
 ```text
-PathSnap/
+ML_HACKATHON/
 ├── README.md                      # Complete system documentation & run instructions
-├── requirements.txt               # Pinned dependencies
+├── requirements.txt               # Pinned dependencies (ML + Backend + UI)
 ├── .gitignore                     # Git hygiene: excludes large datasets, pycache, envs
 ├── backend/
-│   ├── schemas.py                 # Pydantic data contract models
-│   ├── mock_api.py                # Working mock API server for Phase 1 / evaluation
+│   ├── schemas.py                 # Pydantic data contract models (M4)
+│   ├── mock_api.py                # Working mock API server for Phase 1 / evaluation (M4)
 │   └── main.py                    # Final production FastAPI backend (M3)
 ├── ui/
-│   ├── app.py                     # Streamlit Evaluator Dashboard
-│   └── index.html                 # Standalone Leaflet web console
+│   ├── app.py                     # Streamlit Evaluator Dashboard (M4)
+│   └── index.html                 # Standalone Leaflet web console (M4)
 ├── src/
-│   ├── __init__.py
+│   ├── modeling/                  # Member 2's baseline & benchmark suite
+│   │   ├── train_baselines.py     # 6-model trainer across 5 algorithm families
+│   │   ├── evaluate.py            # Observation-level Top-1 & Macro F1 metrics
+│   │   ├── data_loader.py         # Candidate & feature data loader
+│   │   └── smoke_test.py          # Fast verification runner
 │   ├── preprocessing.py          # Data parsing & geospatial calculations (M1)
-│   ├── models.py                  # 5 ML model implementations (M2)
 │   └── hmm_decoder.py             # HMM transition/emission & Viterbi logic (M3)
-├── notebooks/
-│   ├── 01_eda_and_preprocessing.ipynb
-│   └── 02_model_experimentation.ipynb
 ├── artifacts/                     # Serialized model weights & scalers (.pkl)
 ├── results/                       # Evaluation tables, confusion matrices, logs
 └── docs/                          # Technical report draft & architecture diagrams

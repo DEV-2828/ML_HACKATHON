@@ -1,17 +1,38 @@
-# Byte-compiled / optimized / DLL files
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python caches & build artifacts
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Virtual Environment
-.venv/
-env/
-venv/
-ENV/
+*.so
+*.egg-info/
+dist/
+build/
+.pytest_cache/
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
 *-checkpoint.ipynb
+
+# Secrets & environment variables (never commit credentials)
+.env
+.env.*
+*.pem
+*.key
+
+# Raw & large local datasets (keep repo lightweight for GitHub)
+Student folder/
+PathSnap_student_materials/
+evaluator_test/
+data/raw/
+data/processed/*.parquet
+data/processed/*.csv
+*.tar.gz
+*.zip
 
 # IDE & OS files
 .vscode/
@@ -19,18 +40,6 @@ ENV/
 .DS_Store
 Thumbs.db
 *.swp
-
-# Sensitive files
-.env
-*.pem
-*.key
-
-# Large raw datasets (keep data external or in specified directories)
-Student folder/
-PathSnap_student_materials/
-data/raw/
-*.tar.gz
-*.zip
 
 # Logs & temp files
 *.log

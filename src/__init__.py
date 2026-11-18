@@ -1,1 +1,1 @@
-# PathSnap Source Package
+"""PathSnap ML Hackathon source package."""
