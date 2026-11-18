@@ -296,6 +296,157 @@ def _prepare_compact_images(md_text: str, tmp_dir: Path, max_width: int = 1400) 
     return img_pattern.sub(_replace, md_text)
 
 
+NAVY_CSS = """
+/* ── Navy header bar (matches PES University house style) ── */
+body {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 10pt;
+    line-height: 1.55;
+    color: #1a1a2e;
+    margin: 0;
+    padding: 0;
+}
+
+/* Top page header — navy bar */
+h1:first-of-type {
+    background-color: #0d1b4b;
+    color: #ffffff;
+    padding: 14px 20px 10px 20px;
+    margin: 0 -36px 18px -36px;
+    font-size: 15pt;
+    letter-spacing: 0.5px;
+    border-bottom: 4px solid #c8a84b;
+}
+
+/* Section headers — dark navy, gold underline */
+h2 {
+    color: #0d1b4b;
+    font-size: 12pt;
+    font-weight: bold;
+    border-bottom: 2px solid #c8a84b;
+    padding-bottom: 3px;
+    margin-top: 20px;
+    margin-bottom: 8px;
+}
+
+h3 {
+    color: #0d1b4b;
+    font-size: 10.5pt;
+    font-weight: bold;
+    margin-top: 14px;
+    margin-bottom: 5px;
+}
+
+h4 {
+    color: #1a3a6b;
+    font-size: 10pt;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 4px;
+}
+
+/* Tables — zebra stripes with navy header */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 8.5pt;
+    margin: 10px 0 14px 0;
+}
+
+thead tr {
+    background-color: #0d1b4b;
+    color: #ffffff;
+}
+
+thead th {
+    padding: 5px 7px;
+    text-align: center;
+    font-weight: bold;
+    border: 1px solid #334480;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f0f4ff;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+tbody td {
+    padding: 4px 7px;
+    border: 1px solid #c5cae9;
+    vertical-align: top;
+}
+
+/* Code blocks */
+code {
+    background-color: #eef1f8;
+    font-family: "Courier New", monospace;
+    font-size: 8.5pt;
+    padding: 1px 3px;
+    border-radius: 3px;
+    color: #1a1a2e;
+}
+
+pre {
+    background-color: #1a1a2e;
+    color: #e8f0ff;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 8pt;
+    border-left: 4px solid #c8a84b;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+}
+
+/* Horizontal rules */
+hr {
+    border: none;
+    border-top: 1.5px solid #c8a84b;
+    margin: 18px 0;
+}
+
+/* Strong emphasis */
+strong {
+    color: #0d1b4b;
+    font-weight: bold;
+}
+
+/* Images — centered */
+img {
+    display: block;
+    max-width: 100%;
+    margin: 10px auto;
+}
+
+/* Lists */
+ul, ol {
+    margin: 6px 0 8px 0;
+    padding-left: 20px;
+}
+
+li {
+    margin-bottom: 3px;
+}
+
+/* Blockquotes (used for callouts) */
+blockquote {
+    border-left: 3px solid #c8a84b;
+    margin: 10px 0;
+    padding: 4px 10px;
+    color: #334480;
+    background-color: #f8f9ff;
+}
+"""
+
+
 def generate_report() -> None:
     out_dir = BASE_DIR / "docs"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -311,7 +462,8 @@ def generate_report() -> None:
         compact_md = _prepare_compact_images(REPORT_MD, tmp_dir, max_width=1400)
         pdf = MarkdownPdf(toc_level=2)
         pdf.add_section(
-            Section(compact_md, toc=True, paper_size="A4", root=str(tmp_dir))
+            Section(compact_md, toc=True, paper_size="A4", root=str(tmp_dir)),
+            user_css=NAVY_CSS,
         )
         pdf.save(str(pdf_file))
 
