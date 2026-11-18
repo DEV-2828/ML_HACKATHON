@@ -154,7 +154,7 @@ You have two deployment options:
   "details": {
     "nodes_count": 8542,
     "arcs_count": 18196,
-    "decoder": "Viterbi (Gaussian Distance Emission & Topological Transition)"
+    "decoder": "Log-Space HMM + Viterbi (Classifier Emissions + Bounded Dijkstra Road Transitions)"
   }
 }
 ```

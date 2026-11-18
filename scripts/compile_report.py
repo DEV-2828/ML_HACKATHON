@@ -22,6 +22,7 @@ REPORT_MD = r"""# PATHSNAP: DISTRIBUTED MAP-MATCHING & ROUTE RECONSTRUCTION
 ## Consolidated Technical Report (Deliverable 2)
 
 **Course:** UE24CS352A Machine Learning — PES University, CSE (RR Campus)  
+**Team 3:** Devopam Pal (`PES2UG24CS152`), Deepthi N Reddy (`PES2UG24CS149`), Dwijesh Krishna Ghattamaraju (`PES2UG24CS163`), Hanumantha L (`PES2UG24CS179`)  
 **Deliverable:** Consolidated Technical Report (PDF)  
 **Public GitHub Repository:** https://github.com/DEV-2828/ML_HACKATHON  
 **Global Random Seed:** `42`
@@ -99,14 +100,14 @@ We trained and compared **six distinct models spanning five algorithm families**
 
 ### 3.1 Overall Model Comparison (`results/metrics/model_comparison.csv`)
 
-| Model | Algorithm Family | Key Configuration | CV Macro F1-score (± Std) | Top-1 Accuracy (Overall / Covered) | Route Continuity | Student-Test Macro F1-score | Precision / Recall | Log Loss | Inference Time (10 Trips / Per Trip) |
-| :--- | :--- | :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| **MLP** | Neural Network | `hidden=(64,32), relu, adam, alpha=1e-3, lr=1e-3, batch=2048, 15 ep, Scaled` | **0.8857 ± 0.0093** | 0.8223 / 0.8330 | **0.9196** | **0.8966** | 0.8202 / 0.7895 | **0.0556** | 0.1024 s (10.24 ms) |
-| **RandomForest** | Ensemble (Bagging) | `n_est=100, depth=16, min_leaf=10, max_samp=0.4, balanced_subsample` | 0.8471 ± 0.0122 | 0.8225 / 0.8332 | 0.9122 | 0.8534 | 0.5948 / 0.9369 | 0.1026 | 0.2246 s (22.46 ms) |
-| **XGBoost** | Boosting | `n_est=200, depth=6, lr=0.1, sub=0.8, col=0.8, hist, spw≈14.2` | 0.8270 ± 0.0126 | **0.8260 / 0.8368** | 0.9171 | 0.8327 | 0.5412 / 0.9553 | 0.1232 | 0.0581 s (5.81 ms) |
-| **DecisionTree** | Tree-based | `gini, depth=12, min_leaf=20, class_weight=balanced` | 0.8184 ± 0.0120 | 0.8032 / 0.8137 | 0.8951 | 0.8247 | 0.5252 / 0.9514 | 0.1444 | **0.0352 s (3.52 ms)** |
-| **ExtraTrees** | Ensemble (Randomized) | `n_est=100, depth=18, min_leaf=10, bootstrap=True, max_samp=0.4` | 0.8142 ± 0.0121 | 0.8148 / 0.8254 | 0.9097 | 0.8170 | 0.5080 / 0.9553 | 0.1605 | 0.2280 s (22.80 ms) |
-| **LogisticRegression** | Linear / Probabilistic | `C=1.0, lbfgs, max_iter=1000, balanced, StandardScaler` | 0.7161 ± 0.0146 | 0.7450 / 0.7547 | 0.8684 | 0.7104 | 0.3232 / **0.9731** | 0.2225 | 0.0366 s (3.66 ms) |
+| Model | Algorithm Family | Key Configuration | CV Macro F1 (± Std) | Top-1 Acc (All / Cov) | Route Cont. | Test Macro F1 | Log Loss | Inference Time (Per Trip) |
+| :--- | :--- | :--- | ---: | ---: | ---: | ---: | ---: | ---: |
+| **MLP** | Neural Network | `layers=(64,32), relu, adam, alpha=1e-3, lr=1e-3, batch=2048, 15 ep, Scaled` | **0.8857 ± 0.0093** | 0.8223 / 0.8330 | **0.9196** | **0.8966** | **0.0556** | 0.1024 s (10.24 ms) |
+| **RandomForest** | Ensemble (Bagging) | `n_est=100, depth=16, min_leaf=10, max_samp=0.4, balanced_sub` | 0.8471 ± 0.0122 | 0.8225 / 0.8332 | 0.9122 | 0.8534 | 0.1026 | 0.2246 s (22.46 ms) |
+| **XGBoost** | Boosting | `n_est=200, depth=6, lr=0.1, sub=0.8, col=0.8, hist, spw≈14.2` | 0.8270 ± 0.0126 | **0.8260 / 0.8368** | 0.9171 | 0.8327 | 0.1232 | 0.0581 s (5.81 ms) |
+| **DecisionTree** | Tree-based | `gini, depth=12, min_leaf=20, balanced` | 0.8184 ± 0.0120 | 0.8032 / 0.8137 | 0.8951 | 0.8247 | 0.1444 | **0.0352 s (3.52 ms)** |
+| **ExtraTrees** | Ensemble (Rand.) | `n_est=100, depth=18, min_leaf=10, boot=True, max_samp=0.4` | 0.8142 ± 0.0121 | 0.8148 / 0.8254 | 0.9097 | 0.8170 | 0.1605 | 0.2280 s (22.80 ms) |
+| **LogisticReg** | Linear / Prob. | `C=1.0, lbfgs, max_iter=1000, balanced, Scaled` | 0.7161 ± 0.0146 | 0.7450 / 0.7547 | 0.8684 | 0.7104 | 0.2225 | 0.0366 s (3.66 ms) |
 
 ### 3.2 Compulsory Analysis for EVERY Model
 
@@ -251,27 +252,15 @@ Each interactive HTML map includes **five distinguishable colour-coded layers**,
 ## 7. API, UI and Deployment
 
 ### Two-Laptop Distributed Architecture
-- **Laptop 1 — Production FastAPI Server (`backend/api.py`):** Loads `artifacts/final_model.joblib`, `artifacts/model_metadata.json`, and `artifacts/hmm_config.json` once on startup. Exposes `GET /health`, `GET /trips`, and `POST /predict` (alias `/evaluate`). On each request, `src/inference_pipeline.py` extracts candidate segments & 12 UTM features from `.track`/`.nodes`/`.arcs` ONLY, scores them with Bayesian-tuned XGBoost, decodes via `HMMRouteDecoder`, computes accuracy strictly server-side using internal `.route` (never exposed to the model or UI), and prints live timestamped telemetry to CMD.
-  ```powershell
-  .\.venv\Scripts\python -m uvicorn backend.api:app --host 0.0.0.0 --port 8000
-  ```
-- **Laptop 2 — Evaluator UI (`ui/app.py`):** Streamlit + Folium dashboard connecting over LAN/hotspot (`http://<LAPTOP_1_IP>:8000`). Lists all 10 reserved evaluation trips dynamically from `/trips`, dispatches the evaluator's chosen `trip_id` to Laptop 1, and renders live KPI cards, Classifier vs HMM comparison table, system details, and interactive multi-layer Leaflet map.
-  ```powershell
-  .\.venv\Scripts\python -m streamlit run ui/app.py
-  ```
+- **Laptop 1 — Production FastAPI Server (`backend/api.py`):** Loads `artifacts/final_model.joblib`, `artifacts/model_metadata.json`, and `artifacts/hmm_config.json` once on startup. Exposes `GET /health`, `GET /trips`, and `POST /predict` (alias `/evaluate`). On each request, `src/inference_pipeline.py` extracts candidate segments & 12 UTM features from `.track`/`.nodes`/`.arcs` ONLY, scores them with Bayesian-tuned XGBoost, decodes via `HMMRouteDecoder`, computes accuracy strictly server-side using internal `.route` (never exposed to the model or UI), and prints live timestamped telemetry to CMD.  
+  **Launch Command:** `.\.venv\Scripts\python -m uvicorn backend.api:app --host 0.0.0.0 --port 8000`
+- **Laptop 2 — Evaluator UI (`ui/app.py`):** Streamlit + Folium dashboard connecting over LAN/hotspot (`http://<LAPTOP_1_IP>:8000`). Lists all 10 reserved evaluation trips dynamically from `/trips`, dispatches the evaluator's chosen `trip_id` to Laptop 1, and renders live KPI cards, Classifier vs HMM comparison table, system details, and interactive multi-layer Leaflet map.  
+  **Launch Command:** `.\.venv\Scripts\python -m streamlit run ui/app.py`
 - **Automated Verification (`backend/test_api.py`):** Verified 10/10 trips passing live HTTP end-to-end (`108 ms – 2,095 ms` per trip).
 
 ![Working Evaluator UI (Streamlit + Interactive Folium Route Reconstruction Map)](PLOT/ui_demo_screenshot.jpg)
 
 ![Laptop 1 Production FastAPI Server CMD Log (Uvicorn on 0.0.0.0:8000, Model & 10 Evaluation Trips Loaded)](PLOT/cmd_api_screenshot.png)
-
----
-
-## 8. Academic Integrity and Reproducibility Statement
-
-1. All data exploration, feature engineering, 6-model experimentation, 30-trial Bayesian hyperparameter optimisation, HMM/Viterbi decoding, FastAPI backend, and Streamlit UI were independently developed and verified by this team.
-2. Every metric, confusion matrix, learning curve, and comparison table in this PDF matches the committed CSV/JSON outputs in `data_geo/outputs/`, `results/metrics/`, `PLOT/`, and `artifacts/` in our public GitHub repository: https://github.com/DEV-2828/ML_HACKATHON.
-3. `evaluator_test` was never used for training, feature selection, model choice, hyperparameter optimisation, or HMM tuning, and reference `.route` labels remain strictly server-side on Laptop 1.
 """
 
 
@@ -299,22 +288,22 @@ def _prepare_compact_images(md_text: str, tmp_dir: Path, max_width: int = 1400) 
 SIMPLE_CSS = """
 body {
     font-family: Arial, sans-serif;
-    font-size: 10pt;
-    line-height: 1.5;
-    color: #111;
+    font-size: 9.5pt;
+    line-height: 1.48;
+    color: #111111;
 }
-h1 { font-size: 16pt; margin-bottom: 6px; }
-h2 { font-size: 13pt; margin-top: 18px; margin-bottom: 4px; border-bottom: 1px solid #aaa; padding-bottom: 2px; }
-h3 { font-size: 11pt; margin-top: 12px; margin-bottom: 3px; }
-h4 { font-size: 10pt; margin-top: 8px; margin-bottom: 2px; }
-table { border-collapse: collapse; width: 100%; font-size: 8.5pt; margin: 8px 0 12px 0; }
-th { background-color: #e8e8e8; font-weight: bold; padding: 4px 6px; border: 1px solid #bbb; text-align: left; }
-td { padding: 3px 6px; border: 1px solid #ccc; vertical-align: top; }
+h1 { font-size: 15pt; margin-bottom: 6px; color: #111111; }
+h2 { font-size: 12.5pt; margin-top: 16px; margin-bottom: 4px; border-bottom: 1px solid #999999; padding-bottom: 2px; color: #111111; }
+h3 { font-size: 10.5pt; margin-top: 12px; margin-bottom: 3px; color: #111111; }
+h4 { font-size: 9.5pt; margin-top: 8px; margin-bottom: 2px; color: #111111; }
+table { border-collapse: collapse; width: 100%; font-size: 7.5pt; margin: 8px 0 12px 0; }
+th { background-color: #e8e8e8; color: #111111; font-weight: bold; padding: 4px 4px; border: 1px solid #aaaaaa; text-align: left; }
+td { padding: 3px 4px; border: 1px solid #cccccc; vertical-align: top; color: #111111; }
 tr:nth-child(even) td { background-color: #f7f7f7; }
-code { font-family: "Courier New", monospace; font-size: 8.5pt; background: #f0f0f0; padding: 1px 3px; }
-pre { background: #f4f4f4; padding: 8px 12px; font-size: 8pt; border-left: 3px solid #888; white-space: pre-wrap; word-break: break-all; }
-pre code { background: none; padding: 0; }
-hr { border: none; border-top: 1px solid #ccc; margin: 14px 0; }
+code { font-family: "Courier New", monospace; font-size: 8pt; background-color: #f0f0f0; color: #111111; padding: 1px 3px; }
+pre { background-color: #f4f4f4; color: #111111; padding: 8px 10px; font-size: 8pt; border-left: 3px solid #888888; }
+pre code { background-color: #f4f4f4; color: #111111; padding: 0; }
+hr { border-top: 1px solid #cccccc; margin: 12px 0; }
 img { display: block; max-width: 100%; margin: 8px auto; }
 ul, ol { margin: 4px 0 6px 0; padding-left: 18px; }
 li { margin-bottom: 2px; }

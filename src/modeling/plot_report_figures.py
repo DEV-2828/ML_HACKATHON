@@ -38,8 +38,10 @@ def _load_combined_models(m_dir: Path) -> pd.DataFrame:
     uvt_path = m_dir / "untuned_vs_tuned.csv"
     if uvt_path.exists():
         uvt = pd.read_csv(uvt_path)
-        tuned = uvt[uvt["Version"].str.contains("Tuned", case=False, na=False)]
-        tuned = tuned[~tuned["Version"].str.contains("Delta", case=False, na=False)]
+        tuned = uvt[
+            uvt["Version"].str.contains("Tuned", case=False, na=False)
+            & ~uvt["Version"].str.contains("Untuned|Delta", case=False, na=False)
+        ]
         if not tuned.empty:
             r = tuned.iloc[0]
             tuned_row = pd.DataFrame(
@@ -334,8 +336,10 @@ def plot_tuned_confusion_matrix(m_dir: Path, out_dir: Path) -> Path | None:
     uvt_p = m_dir / "untuned_vs_tuned.csv"
     if uvt_p.exists():
         uvt = pd.read_csv(uvt_p)
-        t = uvt[uvt["Version"].str.contains("Tuned", case=False, na=False)]
-        t = t[~t["Version"].str.contains("Delta", case=False, na=False)]
+        t = uvt[
+            uvt["Version"].str.contains("Tuned", case=False, na=False)
+            & ~uvt["Version"].str.contains("Untuned|Delta", case=False, na=False)
+        ]
         if not t.empty:
             r = t.iloc[0]
             subtitle = (
@@ -344,7 +348,7 @@ def plot_tuned_confusion_matrix(m_dir: Path, out_dir: Path) -> Path | None:
                 f"LogLoss={r['Log Loss']:.5f}"
             )
 
-    fig, ax = plt.subplots(figsize=(6.2, 5.2))
+    fig, ax = plt.subplots(figsize=(6.8, 5.4))
     sns.heatmap(
         cm_norm,
         annot=annot,
@@ -364,7 +368,7 @@ def plot_tuned_confusion_matrix(m_dir: Path, out_dir: Path) -> Path | None:
     ax.set_xlabel("Predicted Label", fontsize=10, fontweight="bold")
     ax.set_ylabel("True Reference Label", fontsize=10, fontweight="bold")
     ax.tick_params(axis="y", rotation=0)
-    ax.set_title(f"XGBoost (Bayesian Tuned) — Student-Test Confusion Matrix{subtitle}", fontsize=10.5, fontweight="bold", pad=10)
+    ax.set_title(f"XGBoost (Bayesian Tuned) — Student-Test CM{subtitle}", fontsize=10.0, fontweight="bold", pad=10)
     fig.tight_layout()
     return _save(fig, out_dir / "cm_XGBoost_tuned.png")
 
