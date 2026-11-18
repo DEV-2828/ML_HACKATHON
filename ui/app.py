@@ -18,42 +18,46 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom Styling for PES University Hackathon Presentation
+# Custom Styling with full Dark Mode & Light Mode support
 st.markdown("""
 <style>
     .main-header {
         font-size: 2.2rem;
-        font-weight: 700;
-        color: #1E3A8A;
+        font-weight: 800;
+        background: linear-gradient(90deg, #38BDF8, #818CF8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
         margin-bottom: 0.2rem;
     }
     .sub-header {
         font-size: 1.05rem;
-        color: #4B5563;
+        color: #94A3B8;
         margin-bottom: 1.2rem;
     }
     .badge-laptop {
-        background-color: #DBEAFE;
-        color: #1E40AF;
-        padding: 4px 10px;
+        background: linear-gradient(135deg, #1E40AF, #3B82F6);
+        color: #FFFFFF;
+        padding: 5px 12px;
         border-radius: 6px;
         font-size: 0.85rem;
         font-weight: 600;
         display: inline-block;
         margin-bottom: 1rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
-    .metric-card {
-        background-color: #F9FAFB;
-        border: 1px solid #E5E7EB;
-        border-radius: 8px;
-        padding: 12px;
-        text-align: center;
+    .pes-badge {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #F59E0B;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # ----------------- SIDEBAR: NETWORK & EVALUATION CONTROLS -----------------
-st.sidebar.image("https://upload.wikimedia.org/wikipedia/en/thumb/e/eb/PES_University_logo.png/220px-PES_University_logo.png", width=110)
+st.sidebar.markdown('<div class="pes-badge">🎓 PES University</div>', unsafe_allow_html=True)
 st.sidebar.title("PathSnap Evaluator")
 st.sidebar.markdown('<span class="badge-laptop">Laptop 2 — Evaluator Client</span>', unsafe_allow_html=True)
 
@@ -208,7 +212,7 @@ if "last_result" in st.session_state:
         f_map = folium.Map(
             location=[center_lat, center_lon],
             zoom_start=15,
-            tiles="CartoDB positron"
+            tiles="OpenStreetMap"
         )
 
         # 1. Candidate Road Network Geometry (Subtle gray lines)
@@ -308,7 +312,7 @@ if "last_result" in st.session_state:
         details = data.get("details", {})
         st.json({
             "Trip ID": trip_id,
-            "Total GPS Points": total_obs,
+            "Total GPS Points": total_pts,
             "Sampled Points on Map": len(raw_gps),
             "Road Segments in Subgraph": details.get("arcs_count", "N/A"),
             "Sequential Decoder": details.get("decoder", "Viterbi Trellis"),
