@@ -5,7 +5,7 @@
 
 ---
 
-## 📌 Executive Summary
+##  Executive Summary
 GPS tracking data in urban environments suffers from multipath reflections, signal interference, and low sampling frequencies. **PathSnap** is a distributed machine learning system designed to reconstruct accurate, continuous vehicle trajectories by matching noisy GPS observations to a directed road network graph.
 
 ---
