@@ -1,0 +1,57 @@
+﻿{
+    "data_root":  "\u003cpath to supplied trip data\u003e",
+    "trip_count_by_partition":  {
+                                    "student_test":  10,
+                                    "train":  80
+                                },
+    "total_trips":  90,
+    "gps_observations":  227577,
+    "total_candidate_rows":  3291150,
+    "feature_columns":  [
+                            "distance_to_arc_m",
+                            "signed_lateral_m",
+                            "distance_to_arc_midpoint_m",
+                            "distance_to_nearest_endpoint_m",
+                            "arc_length_m",
+                            "gps_heading_sin_delta",
+                            "gps_heading_cos_delta",
+                            "gps_speed_mps",
+                            "gps_step_distance_m",
+                            "gps_time_delta_s",
+                            "gps_turn_angle_rad",
+                            "point_to_arc_along_fraction"
+                        ],
+    "candidate_radius_m":  80.0,
+    "candidate_limit_per_observation":  40,
+    "mean_candidate_miss_rate":  0.102435659139544,
+    "partitions_used":  [
+                            "student_test",
+                            "train"
+                        ],
+    "model_handoff":  {
+                          "train":  {
+                                        "trip_count":  80,
+                                        "gps_observations":  208417,
+                                        "reference_observations":  208417,
+                                        "candidate_missed_observations":  23066,
+                                        "candidate_miss_rate":  0.11067235398264057,
+                                        "candidate_rows":  2946671,
+                                        "artifact":  "data\\train_candidates.parquet"
+                                    },
+                          "student_test":  {
+                                               "trip_count":  10,
+                                               "gps_observations":  19160,
+                                               "reference_observations":  19160,
+                                               "candidate_missed_observations":  246,
+                                               "candidate_miss_rate":  0.012839248434237996,
+                                               "candidate_rows":  344479,
+                                               "artifact":  "data\\student_test_candidates.parquet"
+                                           }
+                      },
+    "reference_label_method":  "closest supplied-route arc to each GPS point, by projected point-to-segment distance; observations where that arc is absent from generated candidates are marked label_available=false",
+    "warnings":  [
+                     "Supplied .route files are reference labels and may have limitations.",
+                     "student_test is development data; do not use evaluator-test data to tune the model.",
+                     "Candidate generation uses a nearest-midpoint shortlist before exact point-to-segment filtering."
+                 ]
+}
